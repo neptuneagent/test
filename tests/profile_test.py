@@ -6,9 +6,9 @@ class ProfilePictureUploadTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        option = webdriver.FirefoxOptions()
+        option = webdriver.EdgeOptions()
         option.add_argument('--headless')
-        cls.browser = webdriver.Firefox(options=option)
+        cls.browser = webdriver.Edge(options=option)
         try:
             cls.url = os.environ['URL']
         except:
