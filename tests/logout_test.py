@@ -1,52 +1,43 @@
-import unittest
+import unittest, os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 class LogoutTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # Use a compatible browser driver (adjust as needed)
         option = webdriver.EdgeOptions()
         option.add_argument('--headless')
         cls.browser = webdriver.Edge(options=option)
-
         try:
             cls.url = os.environ['URL']
         except:
-            cls.url = "http://localhost/"
+            cls.url = "http://localhost"
 
-    def test_logout(self):
-        self.login()
+    def test(self):
+        self.login_correct_credentials()
+        self.index_page()
         self.logout()
 
-    def login(self):
-        login_url = self.url + '/login.php'
+    def login_correct_credentials(self):
+        login_url = self.url +'/login.php'
         self.browser.get(login_url)
 
-        # Fill in login form and submit
-        username_field = self.browser.find_element(By.ID, 'inputUsername')
-        username_field.send_keys('admin')
-        password_field = self.browser.find_element(By.ID, 'inputPassword')
-        password_field.send_keys('nimda666!')
-        login_button = self.browser.find_element(By.TAG_NAME, 'button')
-        login_button.click()
+        self.browser.find_element(By.ID, 'inputUsername').send_keys('admin')
+        self.browser.find_element(By.ID, 'inputPassword').send_keys('nimda666!')
+        self.browser.find_element(By.TAG_NAME, 'button').click()
 
-        # Verify successful login
-        WebDriverWait(self.browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//h2[contains(text(),'Halo, admin')]"))
-        )  # Adjusted XPath for specificity
+    def index_page(self):
+        expected_result = "admin"
+        actual_result = self.browser.find_element(By.XPATH, "//h2[contains(text(),'Halo,')]").text.split(', ')[1]
+        self.assertIn(expected_result, actual_result)
 
     def logout(self):
-        logout_url = self.url + '/logout.php'  # Access logout URL directly
-        self.browser.get(logout_url)
+        self.browser.find_element(By.XPATH, "//a[contains(text(),'Sign out')]").click()
 
-        # Assert redirection to login page
-        WebDriverWait(self.browser, 10).until(
-            EC.title_is("Login")  # Adjusted to match expected title
-        )
+        login_page_title = "Login"
+        actual_title = self.browser.title
+        self.assertEqual(login_page_title, actual_title)
 
     @classmethod
     def tearDownClass(cls):
