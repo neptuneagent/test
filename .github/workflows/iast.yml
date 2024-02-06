@@ -2,7 +2,7 @@ name: IAST
 on:
   push:
     branches:
-      - main
+      - master
 jobs:
   dast:
     name: DAST
