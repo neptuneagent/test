@@ -16,7 +16,7 @@ class LogoutTestCase(unittest.TestCase):
         try:
             cls.url = os.environ['URL']
         except:
-            cls.url = "http://localhost/BadCRUD"
+            cls.url = "http://localhost/"
 
     def test_logout(self):
         self.login()
